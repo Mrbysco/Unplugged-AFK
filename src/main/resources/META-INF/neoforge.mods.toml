@@ -1,0 +1,56 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+issueTrackerURL="https://github.com/Mrbysco/Unplugged-AFK/issues"
+license="LGPL-3.0"
+
+[[mods]]
+modId="unplugged_afk_corelib"
+version="${file.jarVersion}"
+displayName="Unplugged AFK - CoreLib"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/unplugged-afk"
+authors="Mrbysco, sakura-ryoko"
+description='''
+Sakura Ryoko's Core Library API
+'''
+iconFile="assets/corelib/icon.png"
+
+[[dependencies.unplugged_afk_corelib]]
+modId="minecraft"
+type="required"
+versionRange="[26.2,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.unplugged_afk_corelib]]
+modId="neoforge"
+type="required"
+versionRange="[26.2.0.1-beta,)"
+ordering="NONE"
+side="BOTH"
+[[mixins]]
+config="corelib.mixins.json"
+
+[[mods]]
+modId="unplugged_afk"
+version="${file.jarVersion}"
+displayName="Unplugged AFK"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/unplugged-afk"
+authors="Mrbysco, sakura-ryoko"
+description='''
+Unplug players as AFK
+'''
+iconFile="assets/unplugged_afk/icon.png"
+
+[[dependencies.unplugged_afk]]
+modId="minecraft"
+type="required"
+versionRange="[26.2,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.unplugged_afk]]
+modId="neoforge"
+type="required"
+versionRange="[26.2.0.1-beta,)"
+ordering="NONE"
+side="BOTH"
+[[mixins]]
+config="unplugged_afk.mixins.json"
