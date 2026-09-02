@@ -32,43 +32,47 @@ import java.util.UUID;
 public class UnpluggedAfkEvents extends Event
 {
 
-	public UnpluggedAfkEvents(@Nullable UUID player, UnpluggedState state) {
+	public UnpluggedAfkEvents(@Nullable UUID player, boolean active)
+	{
 		this.player = player;
-		this.state = state;
+		this.active = active;
 	}
 
 	@Nullable
 	private final UUID player;
-	private final UnpluggedState state;
+	private final boolean active;
 
 
-	public @Nullable UUID getPlayer() {
+	public @Nullable UUID getPlayer()
+	{
 		return player;
-	}
-
-	public UnpluggedState getState() {
-		return state;
 	}
 
 	/**
 	 * Executes when a Player goes Unplugged
 	 * Check the Status portion of the State.
 	 */
-	public static class Start extends UnpluggedAfkEvents {
-		public Start(@Nullable UUID player, UnpluggedState state) {
-			super(player, state);
+	public static class Start extends UnpluggedAfkEvents
+	{
+		public Start(@Nullable UUID player, boolean active)
+		{
+			super(player, active);
 		}
 	}
 
-	public static class Respawn extends UnpluggedAfkEvents {
-		public Respawn(@Nullable UUID player, UnpluggedState state) {
-			super(player, state);
+	public static class Respawn extends UnpluggedAfkEvents
+	{
+		public Respawn(@Nullable UUID player, boolean active)
+		{
+			super(player, active);
 		}
 	}
 
-	public static class End extends UnpluggedAfkEvents {
-		public End(@Nullable UUID player, UnpluggedState state) {
-			super(player, state);
+	public static class End extends UnpluggedAfkEvents
+	{
+		public End(@Nullable UUID player, boolean active)
+		{
+			super(player, active);
 		}
 	}
 }

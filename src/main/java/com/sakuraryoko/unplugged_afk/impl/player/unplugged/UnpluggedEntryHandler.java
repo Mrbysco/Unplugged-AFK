@@ -92,7 +92,7 @@ public record UnpluggedEntryHandler(UnpluggedEntry entry)
             }
         }
 
-	    NeoForge.EVENT_BUS.post(new UnpluggedAfkEvents.Start(player.getUUID(), state));
+	    NeoForge.EVENT_BUS.post(new UnpluggedAfkEvents.Start(player.getUUID(), state.isActive()));
     }
 
     @ApiStatus.Internal
@@ -139,7 +139,7 @@ public record UnpluggedEntryHandler(UnpluggedEntry entry)
         }
 
         final UUID uuid = this.entry().player() != null ? this.entry().player().getUUID() : null;
-	    NeoForge.EVENT_BUS.post(new UnpluggedAfkEvents.End(uuid, new UnpluggedState(reason, this.entry().timer(), this.entry().timeout(), this.entry().startTimeMs(), this.entry().reason())));
+	    NeoForge.EVENT_BUS.post(new UnpluggedAfkEvents.End(uuid, false));
         this.entry().clearPlayer();
         this.entry().reset();
     }

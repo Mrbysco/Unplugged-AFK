@@ -320,7 +320,7 @@ public class UnpluggedPlayerUtils
 		}
 
 		newSp.fromState(newState);
-		NeoForge.EVENT_BUS.post(new UnpluggedAfkEvents.Respawn(ProfileWrap.id(profile), newState));
+		NeoForge.EVENT_BUS.post(new UnpluggedAfkEvents.Respawn(ProfileWrap.id(profile), newState.isActive()));
 	}
 
 	@ApiStatus.Internal
