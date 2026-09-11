@@ -31,8 +31,6 @@ import net.minecraft.server.Services;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.DedicatedServerSettings;
-import net.minecraft.server.jsonrpc.ManagementServer;
-import net.minecraft.server.notifications.NotificationManager;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -49,9 +47,8 @@ public class MixinDedicatedServer
 {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void corelib$onDedicatedServer(Thread serverThread, LevelStorageSource.LevelStorageAccess levelStorageSource, PackRepository packRepository,
-                                           WorldStem worldStem, Optional<GameRules> gameRules, DedicatedServerSettings settings, DataFixer fixerUpper,
-                                           Services services, ManagementServer jsonRpcServer, NotificationManager notificationManager,
-                                           CallbackInfo ci)
+     WorldStem worldStem, Optional<GameRules> gameRules, DedicatedServerSettings settings, DataFixer fixerUpper,
+     Services services, CallbackInfo ci)
     {
         ModInitManager.getInstance().registerModInitHandler(new CoreInit());
         ((ModInitManager) ModInitManager.getInstance()).onModInit();

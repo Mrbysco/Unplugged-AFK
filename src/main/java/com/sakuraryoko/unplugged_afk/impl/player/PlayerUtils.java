@@ -29,7 +29,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityTypes;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -50,7 +49,7 @@ public class PlayerUtils
 
 	public static EntityType<?> getEntityTypeWrap()
 	{
-		return EntityTypes.PLAYER;
+		return EntityType.PLAYER;
 	}
 
 	public static Component formatSuggestSpawnCommand(final String name)

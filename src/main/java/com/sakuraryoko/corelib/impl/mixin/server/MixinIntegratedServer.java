@@ -25,10 +25,8 @@ import com.sakuraryoko.corelib.impl.events.server.ServerEventsManager;
 import com.sakuraryoko.corelib.impl.modinit.ModInitManager;
 import com.sakuraryoko.corelib.impl.network.NetworkServiceManager;
 import net.minecraft.client.server.IntegratedServer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.GameType;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -36,8 +34,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(IntegratedServer.class)
 public class MixinIntegratedServer
 {
-    @Shadow private GameType gameTypeForOtherPlayers;
-
     @Inject(method = "initServer", at = @At("RETURN"))
     private void corelib$onInitServer(CallbackInfoReturnable<Boolean> cir)
     {
@@ -53,19 +49,18 @@ public class MixinIntegratedServer
         }
     }
 
-    @Inject(method = "publishServer(Lnet/minecraft/server/MinecraftServer$MultiplayerScope;I)Z", at = @At("RETURN"))
-    private void corelib$onPublishServer(MinecraftServer.MultiplayerScope scope, int port,
-                                             CallbackInfoReturnable<Boolean> cir)
-    {
-        if (cir.getReturnValue())
-        {
-            ((ModInitManager) ModInitManager.getInstance()).setOpenToLan(true);
-            ((ServerEventsManager) ServerEventsManager.getInstance()).onOpenToLanInternal((IntegratedServer) (Object) this, this.gameTypeForOtherPlayers);
+	@Inject(method = "publishServer", at = @At("RETURN"))
+	private void corelib$onPublishServer(GameType gameType, boolean allowCommands, int port, CallbackInfoReturnable<Boolean> cir)
+	{
+		if (cir.getReturnValue())
+		{
+			((ModInitManager) ModInitManager.getInstance()).setOpenToLan(true);
+			((ServerEventsManager) ServerEventsManager.getInstance()).onOpenToLanInternal((IntegratedServer) (Object) this, gameType);
 
-            if (Reference.EXPERIMENTAL && !NetworkServiceManager.getInstance().isServerStarted())
-            {
-                NetworkServiceManager.getInstance().onStartServer();
-            }
-        }
-    }
+			if (Reference.EXPERIMENTAL && !NetworkServiceManager.getInstance().isServerStarted())
+			{
+				NetworkServiceManager.getInstance().onStartServer();
+			}
+		}
+	}
 }
