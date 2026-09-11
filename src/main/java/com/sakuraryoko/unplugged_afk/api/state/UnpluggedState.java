@@ -24,7 +24,7 @@ import com.sakuraryoko.unplugged_afk.impl.config.ConfigWrap;
 import com.sakuraryoko.unplugged_afk.impl.modinit.InitWrap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.jspecify.annotations.NonNull;
+import javax.annotation.Nonnull;
 
 /**
  * UnpluggedState -- Describes the status and values of an Unplugged Player; or
@@ -62,7 +62,7 @@ public record UnpluggedState(UnpluggedStatus status, int time, long timeout, lon
 	}
 
 	@Override
-	public @NonNull String toString()
+	public @Nonnull String toString()
 	{
 		return "UnpluggedState{" + "status=" + this.status + ", time=" + this.time + ", timeout=" + this.timeout + ", startTime=" + this.startTime + ", reason=" + this.reason + '}';
 	}

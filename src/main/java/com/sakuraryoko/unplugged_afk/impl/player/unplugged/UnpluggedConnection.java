@@ -20,16 +20,16 @@
 
 package com.sakuraryoko.unplugged_afk.impl.player.unplugged;
 
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
+import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.ProtocolInfo;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
+import javax.annotation.Nonnull;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -46,7 +46,7 @@ public class UnpluggedConnection extends Connection
 	}
 
 	@Override
-	public void send(@NonNull Packet<?> packet, @Nullable ChannelFutureListener futureListener, boolean bl)
+	public void send(@Nonnull Packet<?> packet, @Nullable PacketSendListener sendListener)
 	{
 	}
 
@@ -61,12 +61,12 @@ public class UnpluggedConnection extends Connection
 	}
 
 	@Override
-	public void setListenerForServerboundHandshake(@NonNull PacketListener packetListener)
+	public void setListenerForServerboundHandshake(@Nonnull PacketListener packetListener)
 	{
 	}
 
 	@Override
-	public <T extends PacketListener> void setupInboundProtocol(@NonNull ProtocolInfo<T> protocolInfo, @NonNull T packetListener)
+	public <T extends PacketListener> void setupInboundProtocol(@Nonnull ProtocolInfo<T> protocolInfo, @Nonnull T packetListener)
 	{
 	}
 
@@ -77,7 +77,7 @@ public class UnpluggedConnection extends Connection
 	}
 
 	@Override
-	public @NonNull SocketAddress getRemoteAddress()
+	public @Nonnull SocketAddress getRemoteAddress()
 	{
 		return address;
 	}

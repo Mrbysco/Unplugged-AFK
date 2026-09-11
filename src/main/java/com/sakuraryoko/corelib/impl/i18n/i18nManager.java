@@ -332,7 +332,7 @@ public class i18nManager
 										.plainCopy().withStyle((style) ->
 					                         style.applyFormat(ChatFormatting.RED)
 							                         .withHoverEvent(
-			new HoverEvent.ShowText(BuiltinTextHandler.getInstance().of("Missing translation: " + key))));
+			new HoverEvent(HoverEvent.Action.SHOW_TEXT, BuiltinTextHandler.getInstance().of("Missing translation: " + key))));
 		}
 	}
 

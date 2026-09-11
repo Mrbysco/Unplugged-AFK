@@ -25,13 +25,12 @@ import com.sakuraryoko.unplugged_afk.impl.player.wrap.PosWrap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import org.jspecify.annotations.NonNull;
 
 import javax.annotation.Nonnull;
 
 /**
  * PosState - Wrapper around a Players' location, and rotations
- * @param location Level Identifier
+ * @param location Level ResourceLocation
  * @param x Entity X
  * @param y Entity Y
  * @param z Entity Z
@@ -43,7 +42,7 @@ public record PosState(String location, double x, double y, double z, float yaw,
 	public static final PosState EMPTY = new PosState("minecraft:overworld", 0f, 0f, 0f, 0f, 0f);
 
 	@Override
-	public @NonNull String toString()
+	public @Nonnull String toString()
 	{
 		return "PosState{dim="+this.location()+", [x="+this.x()+",y="+this.y()+",z="+this.z()+",yaw="+this.yaw()+",pitch="+this.pitch()+"]}";
 	}

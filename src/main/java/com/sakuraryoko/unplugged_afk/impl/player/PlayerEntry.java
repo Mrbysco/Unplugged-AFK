@@ -28,7 +28,7 @@ import com.sakuraryoko.unplugged_afk.impl.modinit.InitWrap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.NonNull;
+import javax.annotation.Nonnull;
 
 import java.util.UUID;
 
@@ -61,7 +61,7 @@ public record PlayerEntry(UUID uuid, String name, UnpluggedState state, PosState
 	}
 
 	@Override
-	public @NonNull String toString()
+	public @Nonnull String toString()
 	{
 		return "PlayerEntry{name="+this.name()+",uuid="+this.uuid().toString()+",[state="+this.state().toString()+"],[pos="+this.pos().toString()+"],[game="+this.game().toString()+"]}";
 	}

@@ -58,11 +58,11 @@ public class PlayerEventsManager implements IPlayerEventsManager
     {
         if (result == null)
         {
-	        CoreLib.debugLog("onConnection: connection from {} // {}", addr.toString(), profile.id().toString());
+	        CoreLib.debugLog("onConnection: connection from {} // {}", addr.toString(), profile.getId().toString());
         }
         else
         {
-	        CoreLib.debugLog("onConnection: connection from {} // {} --> result: {}", addr.toString(), profile.id().toString(), result.getString());
+	        CoreLib.debugLog("onConnection: connection from {} // {} --> result: {}", addr.toString(), profile.getId().toString(), result.getString());
         }
 
         if (!this.DISPATCH.isEmpty())

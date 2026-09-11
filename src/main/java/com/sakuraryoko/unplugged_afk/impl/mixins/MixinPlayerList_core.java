@@ -27,6 +27,7 @@ import com.mojang.authlib.GameProfile;
 import com.sakuraryoko.unplugged_afk.impl.player.unplugged.UnpluggedGamePacketListener;
 import com.sakuraryoko.unplugged_afk.impl.player.unplugged.UnpluggedPlayerUtils;
 import com.sakuraryoko.unplugged_afk.impl.player.unplugged.UnpluggedServerPlayer;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ClientInformation;
@@ -42,6 +43,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 import java.util.UUID;
@@ -53,10 +55,8 @@ public abstract class MixinPlayerList_core
 	@Shadow @Final private MinecraftServer server;
 	@Shadow @Final private Map<UUID, ServerPlayer> playersByUUID;
 
-	@Inject(method = "placeNewPlayer",
-		at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/server/level/ServerPlayer;level()Lnet/minecraft/server/level/ServerLevel;"))
-	private void unplugged$onLoad(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci)
+	@Inject(method = "load", at = @At(value = "RETURN", shift = At.Shift.BEFORE))
+	private void unplugged$onLoad(ServerPlayer player, CallbackInfoReturnable<CompoundTag> cir)
 	{
 		if (player instanceof UnpluggedServerPlayer sp)
 		{

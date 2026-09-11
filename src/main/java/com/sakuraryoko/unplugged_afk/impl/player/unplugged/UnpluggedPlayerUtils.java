@@ -30,21 +30,16 @@ import com.sakuraryoko.unplugged_afk.impl.config.ConfigWrap;
 import com.sakuraryoko.unplugged_afk.impl.events.PlayerEventsHandler;
 import com.sakuraryoko.unplugged_afk.impl.modinit.InitWrap;
 import com.sakuraryoko.unplugged_afk.impl.player.PlayerManager;
-import com.sakuraryoko.unplugged_afk.impl.player.interfaces.IWaypointManagerInvoker;
 import com.sakuraryoko.unplugged_afk.impl.player.wrap.ProfileWrap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.permissions.Permissions;
 import net.minecraft.server.players.PlayerList;
-import net.minecraft.server.waypoints.ServerWaypointManager;
-import net.minecraft.util.ProblemReporter;
-import net.minecraft.world.level.storage.TagValueInput;
-import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
@@ -136,11 +131,6 @@ public class UnpluggedPlayerUtils
 
 				// Note, that the difference between hiding from
 				// Ops vs all players; is indistinguishable for Waypoints
-
-				if (!ConfigWrap.unplugged().unpluggedHidePlayer)
-				{
-					player.level().getWaypointManager().addPlayer(shadow);
-				}
 			}
 		}
 	}
@@ -177,7 +167,7 @@ public class UnpluggedPlayerUtils
 	@ApiStatus.Internal
 	protected static boolean isOpWrap(@Nonnull ServerPlayer player)
 	{
-		return player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
+		return player.hasPermissions(2);
 	}
 
 	@ApiStatus.Internal
@@ -190,44 +180,6 @@ public class UnpluggedPlayerUtils
 	protected static void sendRemovePacketToPlayerWrap(@Nonnull UnpluggedServerPlayer sp, @Nonnull ServerPlayer player)
 	{
 		player.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(sp.getUUID())));
-	}
-
-	@ApiStatus.Internal
-	public static void onAddOrUpdateWaypoint(ServerWaypointManager manager, @Nonnull ServerPlayer player)
-	{
-		if (ConfigWrap.unplugged().unpluggedHidePlayer && player instanceof UnpluggedServerPlayer sp)
-		{
-			if (sp.isValid())
-			{
-				boolean result = false;
-
-				if (ConfigWrap.unplugged().unpluggedHideFromOps && isOpWrap(player))
-				{
-					result = true;
-				}
-				else if (!isOpWrap(player))
-				{
-					result = true;
-				}
-
-				if (result)
-				{
-					((IWaypointManagerInvoker) manager).unplugged$removePlayer(player);
-				}
-			}
-		}
-	}
-
-	@ApiStatus.Internal
-	public static void onUnhideWaypoint(ServerWaypointManager manager, @Nonnull ServerPlayer player)
-	{
-		if (!ConfigWrap.unplugged().unpluggedHidePlayer && player instanceof UnpluggedServerPlayer sp)
-		{
-			if (sp.isValid())
-			{
-				((IWaypointManagerInvoker) manager).unplugged$addPlayer(player);
-			}
-		}
 	}
 
 	@ApiStatus.Internal
@@ -363,20 +315,11 @@ public class UnpluggedPlayerUtils
 	private final static Logger DUMB_LOGGER = LoggerFactory.getLogger(Reference.MOD_ID);
 	protected static void loadPlayerNbt(UnpluggedServerPlayer player)
 	{
-		try (ProblemReporter.ScopedCollector logger = new ProblemReporter.ScopedCollector(player.problemPath(), DUMB_LOGGER))
+		MinecraftServer server = player.getServer();
+		if (server != null)
 		{
-			Optional<ValueInput> opt = player.level()
-				.getServer().getPlayerList()
-				.loadPlayerData(player.nameAndId())
-			.map((nbt) ->
-				TagValueInput.create(logger, player.registryAccess(), nbt)
-			);
-			opt.ifPresent((data) ->
-			{
-				player.load(data);
-				player.loadAndSpawnEnderPearls(data);
-				player.loadAndSpawnParentVehicle(data);
-			});
+			Optional<CompoundTag> opt = server.getPlayerList().load(player);
+			opt.ifPresent(player::load);
 		}
 	}
 }

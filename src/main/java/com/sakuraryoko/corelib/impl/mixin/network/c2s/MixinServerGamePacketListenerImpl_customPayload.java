@@ -24,7 +24,7 @@ import com.sakuraryoko.corelib.impl.Reference;
 import com.sakuraryoko.corelib.impl.network.PacketListenerManager;
 import net.minecraft.network.protocol.PacketUtils;
 import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.spongepowered.asm.mixin.Mixin;
@@ -42,8 +42,8 @@ public class MixinServerGamePacketListenerImpl_customPayload
 	private void corelib$handleCustomPayload(ServerboundCustomPayloadPacket packet, CallbackInfo ci)
 	{
 		if (!Reference.EXPERIMENTAL) return;
-		PacketUtils.ensureRunningOnSameThread(packet, (ServerGamePacketListenerImpl) (Object) this, this.player.level());
-		Identifier id = packet.payload().type().id();
+		PacketUtils.ensureRunningOnSameThread(packet, (ServerGamePacketListenerImpl) (Object) this, this.player.serverLevel());
+		ResourceLocation id = packet.payload().type().id();
 
 		if (PacketListenerManager.getInstance().onC2SPacketReceived(id, packet, this.player))
 		{

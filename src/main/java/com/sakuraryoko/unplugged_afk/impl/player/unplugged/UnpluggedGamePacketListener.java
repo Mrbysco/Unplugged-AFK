@@ -28,11 +28,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.entity.PositionMoveRotation;
-import net.minecraft.world.entity.Relative;
+import net.minecraft.world.entity.RelativeMovement;
 import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.NonNull;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 @ApiStatus.Internal
@@ -44,7 +43,7 @@ public class UnpluggedGamePacketListener extends ServerGamePacketListenerImpl
 	}
 
 	@Override
-	public void disconnect(@NonNull Component message)
+	public void disconnect(@Nonnull Component message)
 	{
 //		UnpluggedAfk.debugLog("UnpluggedGamePacketListener#disconnect(): message: {}", message.getString());
 		UnpluggedServerPlayer sp = (UnpluggedServerPlayer) this.player;
@@ -64,14 +63,14 @@ public class UnpluggedGamePacketListener extends ServerGamePacketListenerImpl
 	}
 
 	@Override
-	public void teleport(@NonNull PositionMoveRotation position, @NonNull Set<Relative> relativeSet)
+	public void teleport(double x, double y, double z, float yaw, float pitch, @Nonnull Set<RelativeMovement> relativeSet)
 	{
-		super.teleport(position, relativeSet);
+		super.teleport(x, y, z, yaw, pitch, relativeSet);
 
 		if (this.player.level().getPlayerByUUID(this.player.getUUID()) != null)
 		{
 			this.resetPosition();
-			this.player.level().getChunkSource().move(this.player);
+			this.player.serverLevel().getChunkSource().move(this.player);
 		}
 	}
 }

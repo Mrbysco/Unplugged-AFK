@@ -71,7 +71,7 @@ public class ModInitData
             return;
         }
 
-	    this.mcVersion = DetectedVersion.BUILT_IN.name();
+	    this.mcVersion = DetectedVersion.BUILT_IN.getName();
         this.MOD_ID = modID;
         this.integratedServer = false;
         this.dedicatedServer = false;
@@ -111,12 +111,12 @@ public class ModInitData
 
 	public boolean isClient()
 	{
-		return FMLEnvironment.getDist().isClient();
+		return FMLEnvironment.dist.isClient();
 	}
 
 	public boolean isServer()
 	{
-		return FMLEnvironment.getDist().isDedicatedServer();
+		return FMLEnvironment.dist.isDedicatedServer();
 	}
 
     public boolean isIntegratedServer() {return this.integratedServer;}

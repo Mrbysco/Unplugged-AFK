@@ -28,14 +28,14 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
-import org.jspecify.annotations.NonNull;
+import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class CoreServicePacket implements INetworkPacket<ServerboundCustomPayloadPacket, ClientboundCustomPayloadPacket>
 {
-	public static final Identifier PACKET_ID = Identifier.fromNamespaceAndPath(Reference.MOD_ID, "network_service");
+	public static final ResourceLocation PACKET_ID = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "network_service");
 	private String serviceName;
 	private String serviceAddress;
 	private int servicePort;
@@ -199,19 +199,19 @@ public class CoreServicePacket implements INetworkPacket<ServerboundCustomPayloa
 			this(CoreServicePacket.createFromByteBuf(input));
 		}
 
-		public void write(@NonNull FriendlyByteBuf buffer)
+		public void write(@Nonnull FriendlyByteBuf buffer)
 		{
 			data.toByteBuf(buffer);
 		}
 
 		@Override
-		public @NonNull Type<Payload> type()
+		public @Nonnull Type<Payload> type()
 		{
 			return ID;
 		}
 
 		@Override
-		public Identifier getPacketId()
+		public ResourceLocation getPacketId()
 		{
 			return ID.id();
 		}

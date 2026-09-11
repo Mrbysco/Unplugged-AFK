@@ -24,7 +24,7 @@ import com.sakuraryoko.corelib.api.time.DurationFormat;
 import com.sakuraryoko.corelib.api.time.TimeFormat;
 import com.sakuraryoko.corelib.impl.text.BuiltinTextHandler;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Util;
+import net.minecraft.Util;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Random;

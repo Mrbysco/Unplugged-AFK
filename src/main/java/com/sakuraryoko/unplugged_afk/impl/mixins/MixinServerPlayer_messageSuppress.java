@@ -23,8 +23,8 @@ package com.sakuraryoko.unplugged_afk.impl.mixins;
 import com.mojang.authlib.GameProfile;
 import com.sakuraryoko.unplugged_afk.impl.events.PlayerEventsHandler;
 import com.sakuraryoko.unplugged_afk.impl.player.unplugged.UnpluggedPlayerUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -40,9 +40,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinServerPlayer_messageSuppress extends Player
 {
 
-	public MixinServerPlayer_messageSuppress(MinecraftServer server, Level level, GameProfile gameProfile, ClientInformation ci)
+	public MixinServerPlayer_messageSuppress(Level level, BlockPos pos, float yRot, GameProfile gameProfile, ClientInformation ci)
 	{
-		super(level, gameProfile);
+		super(level, pos, yRot, gameProfile);
 	}
 
 	@Inject(method = "sendSystemMessage(Lnet/minecraft/network/chat/Component;Z)V", at = @At("HEAD"), cancellable = true)

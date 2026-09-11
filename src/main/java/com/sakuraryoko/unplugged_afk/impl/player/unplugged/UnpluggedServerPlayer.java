@@ -36,24 +36,20 @@ import com.sakuraryoko.unplugged_afk.impl.player.PlayerManager;
 import com.sakuraryoko.unplugged_afk.impl.player.wrap.GameWrap;
 import com.sakuraryoko.unplugged_afk.impl.player.wrap.PosWrap;
 import com.sakuraryoko.unplugged_afk.impl.player.wrap.ProfileWrap;
-import net.minecraft.core.UUIDUtil;
-import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ServerboundClientCommandPacket;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
-import net.minecraft.server.players.NameAndId;
-import net.minecraft.server.players.OldUsersConverter;
+import net.minecraft.server.players.GameProfileCache;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -62,15 +58,17 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.portal.TeleportTransition;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.NonNull;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
@@ -95,10 +93,9 @@ public class UnpluggedServerPlayer extends ServerPlayer
 		super(server, level, profile, ci);
 	}
 
-	private static CompletableFuture<GameProfile> fetchGameProfile(MinecraftServer server, final UUID uuid)
+	private static CompletableFuture<Optional<GameProfile>> fetchGameProfile(final String name)
 	{
-		final ResolvableProfile resolver = ResolvableProfile.createUnresolved(uuid);
-		return resolver.resolveProfile(server.services().profileResolver());
+		return SkullBlockEntity.fetchGameProfile(name);
 	}
 
 	public static void createFromConfig(MinecraftServer server, PlayerOptions opts)
@@ -108,14 +105,14 @@ public class UnpluggedServerPlayer extends ServerPlayer
 		UnpluggedState state = opts.state;
 		PosState pos = opts.pos;
 		GameState game = opts.game;
-		Identifier id = Identifier.tryParse(pos.location());
+		ResourceLocation id = ResourceLocation.tryParse(pos.location());
 		AtomicReference<ResourceKey<Level>> ref = new AtomicReference<>(Level.OVERWORLD);
 
 		if (id != null)
 		{
 			server.levelKeys().forEach(levelKey ->
 			                           {
-										   if (levelKey.identifier().equals(id))
+										   if (levelKey.location().equals(id))
 										   {
 											   ref.set(levelKey);
 										   }
@@ -123,23 +120,26 @@ public class UnpluggedServerPlayer extends ServerPlayer
 		}
 
 		ServerLevel level = server.getLevel(ref.get());
-		server.services().nameToIdCache().resolveOfflineUsers(false);
+		GameProfileCache.setUsesAuthentication(false);
 		GameProfile profile;
 
-		UUID tempUUID = OldUsersConverter.convertMobOwnerIfNecessary(server, name);
-		if (tempUUID != null && !tempUUID.equals(uuid))
+		try
 		{
-			uuid = tempUUID;
-			opts.uuid = uuid;
+			profile = server.getProfileCache().get(name).orElse(
+					server.getProfileCache().get(uuid).orElse(null)
+			);
 		}
-		if (uuid == null)
+		finally
 		{
-			uuid = UUIDUtil.createOfflinePlayerUUID(name);
+			GameProfileCache.setUsesAuthentication(server.isDedicatedServer() && server.usesAuthentication());
 		}
-		server.services().nameToIdCache().resolveOfflineUsers(server.isDedicatedServer() && server.usesAuthentication());
-		profile = new GameProfile(uuid, name);
 
-		if (server.getPlayerList().getBans().isBanned(new NameAndId(profile)))
+		if (profile == null)
+		{
+			profile = new GameProfile(uuid, name);
+		}
+
+		if (server.getPlayerList().getBans().isBanned(profile))
 		{
 			if (ConfigWrap.mainOpt().debugMode)
 			{
@@ -172,18 +172,13 @@ public class UnpluggedServerPlayer extends ServerPlayer
 			return;
 		}
 
-		server.services().nameToIdCache().resolveOfflineUsers(server.isDedicatedServer() && server.usesAuthentication());
-		fetchGameProfile(server, profile.id()).whenCompleteAsync((p, throwable) ->
+		GameProfile tempProfile = profile;
+		fetchGameProfile(profile.getName()).thenAccept(opt ->
 		{
-			if (throwable != null) { return; }
-			GameProfile temp;
-			if (p.name().isEmpty())
+			GameProfile temp = tempProfile;
+			if (opt.isPresent())
 			{
-				temp = profile;
-			}
-			else
-			{
-				temp = p;
+				temp = opt.get();
 			}
 			final GameProfile finalProfile = temp;
 			server.execute(() -> createFromConfigPhase2(server, level, finalProfile, state, pos, game));
@@ -307,14 +302,14 @@ public class UnpluggedServerPlayer extends ServerPlayer
 	{
 		GameType gameType = GameType.byName(game.gameMode(), GameType.DEFAULT_MODE);
 		final UUID uuid = ProfileWrap.id(profile);
-		Identifier id = Identifier.tryParse(pos.location());
+		ResourceLocation id = ResourceLocation.tryParse(pos.location());
 		AtomicReference<ResourceKey<Level>> ref = new AtomicReference<>(Level.OVERWORLD);
 
 		if (id != null)
 		{
 			server.levelKeys().forEach(levelKey ->
 			                           {
-				                           if (levelKey.identifier().equals(id))
+				                           if (levelKey.location().equals(id))
 				                           {
 					                           ref.set(levelKey);
 				                           }
@@ -393,7 +388,7 @@ public class UnpluggedServerPlayer extends ServerPlayer
 	{
 		if (!pos.matches(sp) && !pos.isEmpty())
 		{
-			sp.startingPosition = () -> sp.snapTo(pos.x(), pos.y(), pos.z(), pos.yaw(), pos.pitch());
+			sp.startingPosition = () -> sp.moveTo(pos.x(), pos.y(), pos.z(), pos.yaw(), pos.pitch());
 		}
 	}
 
@@ -489,7 +484,7 @@ public class UnpluggedServerPlayer extends ServerPlayer
 	}
 
 	@Override
-	public void onEquipItem(final @NonNull EquipmentSlot slot, final @NonNull ItemStack previous, final @NonNull ItemStack stack)
+	public void onEquipItem(final @Nonnull EquipmentSlot slot, final @Nonnull ItemStack previous, final @Nonnull ItemStack stack)
 	{
 		if (!this.isUsingItem())
 		{
@@ -498,7 +493,7 @@ public class UnpluggedServerPlayer extends ServerPlayer
 	}
 
 	@Override
-	public boolean hurtServer(@NonNull ServerLevel level, @NonNull DamageSource damageSource, float amount)
+	public boolean hurt(@Nonnull DamageSource damageSource, float amount)
 	{
 		UnpluggedEntry entry = UnpluggedEntryList.getInstance().get(this);
 
@@ -511,11 +506,11 @@ public class UnpluggedServerPlayer extends ServerPlayer
 			return false;
 		}
 
-		return super.hurtServer(level, damageSource, amount);
+		return super.hurt(damageSource, amount);
 	}
 
 	@Override
-	public void kill(@NonNull ServerLevel level)
+	public void kill()
 	{
 		this.kill(BuiltinTextHandler.getInstance().formatTextSafe("Killed"));
 	}
@@ -524,23 +519,16 @@ public class UnpluggedServerPlayer extends ServerPlayer
 	{
 		this.dismount();
 		this.killShadow(message);
-		if (message.getContents() instanceof TranslatableContents text && text.getKey().equals("multiplayer.disconnect.duplicate_login"))
-		{
-			this.connection.onDisconnect(new DisconnectionDetails(message));
-		}
-		else
-		{
-			this.level().getServer().schedule(
-				new TickTask(this.level().getServer().getTickCount(),
-						() -> this.connection.onDisconnect(new DisconnectionDetails(message))
-			));
-		}
+		this.server.tell(
+				new TickTask(this.server.getTickCount(),
+						() -> this.connection.disconnect(message)
+				));
 	}
 
 	@Override
 	public void tick()
 	{
-		MinecraftServer server = this.level().getServer();
+		MinecraftServer server = this.getServer();
 
 		if (server.getTickCount() % 10 == 0)
 		{
@@ -575,7 +563,7 @@ public class UnpluggedServerPlayer extends ServerPlayer
 
 			this.tickUnplugged(server);
 			this.connection.resetPosition();
-			this.level().getChunkSource().move(this);
+			this.serverLevel().getChunkSource().move(this);
 //			this.hasChangedDimension();
 		}
 
@@ -673,7 +661,7 @@ public class UnpluggedServerPlayer extends ServerPlayer
 	}
 
 	@Override
-	public void die(@NonNull DamageSource damageSource)
+	public void die(@Nonnull DamageSource damageSource)
 	{
 		this.dismount();
 		super.die(damageSource);
@@ -755,21 +743,21 @@ public class UnpluggedServerPlayer extends ServerPlayer
 	}
 
 //	@Override
-//	public @NonNull String getIpAddress()
+//	public @Nonnull String getIpAddress()
 //	{
 //		return "127.0.0.1";
 //	}
 
 //	@Override
-//	protected void checkFallDamage(double y, boolean onGround, @NonNull BlockState state, @NonNull BlockPos pos)
+//	protected void checkFallDamage(double y, boolean onGround, @Nonnull BlockState state, @Nonnull BlockPos pos)
 //	{
 //		this.doCheckFallDamage(0.0, y, 0.0, onGround);
 //	}
 
 	@Override
-	public ServerPlayer teleport(@NonNull TeleportTransition transition)
+	public Entity changeDimension(@NonNull DimensionTransition transition)
 	{
-		super.teleport(transition);
+		super.changeDimension(transition);
 
 		// Handle freeing the End
 		if (this.wonGame)

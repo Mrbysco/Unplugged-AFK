@@ -37,11 +37,11 @@ public class PlayerUtils
 	public static Component formatEntityTooltip(GameProfile profile)
 	{
 		MutableComponent result = Component.literal(ProfileWrap.name(profile));
-		HoverEvent hoverEvent = new HoverEvent.ShowEntity(
-		                            new HoverEvent.EntityTooltipInfo(getEntityTypeWrap(),
-		                                                             ProfileWrap.id(profile),
-		                                                             Component.literal(ProfileWrap.name(profile))
-		                            )
+		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_ENTITY,
+				new HoverEvent.EntityTooltipInfo(getEntityTypeWrap(),
+						ProfileWrap.id(profile),
+						Component.literal(ProfileWrap.name(profile))
+				)
 		);
 		result.withStyle(style -> style.withHoverEvent(hoverEvent));
 		return result;
@@ -58,10 +58,10 @@ public class PlayerUtils
 		ClickEvent clickEvent;
 		HoverEvent hoverEvent;
 
-		clickEvent = new ClickEvent.SuggestCommand(
+		clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
 				                    "/"+UnpluggedAdminCommand.COMMAND+ " spawn " + name);
 
-		hoverEvent = new HoverEvent.ShowText(
+		hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT,
 		                            Component.literal("Spawn"));
 
 		result.withStyle(style ->
@@ -78,9 +78,9 @@ public class PlayerUtils
 		ClickEvent clickEvent;
 		HoverEvent hoverEvent;
 
-		clickEvent = new ClickEvent.SuggestCommand(
+		clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
 				                    "/"+UnpluggedAdminCommand.COMMAND+ " kick " + name.getString());
-		hoverEvent = new HoverEvent.ShowText(
+		hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT,
 				                    Component.literal("Kick"));
 
 		result.withStyle(style ->

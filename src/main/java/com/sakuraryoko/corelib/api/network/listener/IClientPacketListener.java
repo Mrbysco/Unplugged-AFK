@@ -25,7 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The Client side Packet Listener (Sending/Receiving) instance.
@@ -36,7 +36,7 @@ import net.minecraft.resources.Identifier;
  */
 public interface IClientPacketListener<C2S, S2C, PACKET extends INetworkPacket<C2S, S2C>>
 {
-	Identifier getPacketId();
+	ResourceLocation getPacketId();
 
 	void sendAsPayload(PACKET packet);
 

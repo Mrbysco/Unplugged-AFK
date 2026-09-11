@@ -24,7 +24,7 @@ import com.sakuraryoko.corelib.api.network.listener.IClientPacketListener;
 import com.sakuraryoko.corelib.api.network.listener.IServerPacketListener;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -40,8 +40,8 @@ public class PacketListenerManager implements IPacketListenerManager
 {
 	private static final PacketListenerManager INSTANCE = new PacketListenerManager();
 	public static PacketListenerManager getInstance() { return INSTANCE; }
-	private final HashMap<Identifier, IClientPacketListener<?, ?, ?>> clientListeners = new HashMap<>();
-	private final HashMap<Identifier, IServerPacketListener<?, ?, ?>> serverListeners = new HashMap<>();
+	private final HashMap<ResourceLocation, IClientPacketListener<?, ?, ?>> clientListeners = new HashMap<>();
+	private final HashMap<ResourceLocation, IServerPacketListener<?, ?, ?>> serverListeners = new HashMap<>();
 
 	@Override
 	public void registerS2CPacketListener(IClientPacketListener<?, ?, ?> listener)
@@ -73,17 +73,17 @@ public class PacketListenerManager implements IPacketListenerManager
 		this.serverListeners.remove(listener.getPacketId());
 	}
 
-	public Set<Identifier> getS2CKeySet()
+	public Set<ResourceLocation> getS2CKeySet()
 	{
 		return this.clientListeners.keySet();
 	}
 
-	public Set<Identifier> getC2SKeySet()
+	public Set<ResourceLocation> getC2SKeySet()
 	{
 		return this.serverListeners.keySet();
 	}
 
-	public <T extends PacketListener> boolean sendC2SPacket(Identifier id, Packet<T> packet)
+	public <T extends PacketListener> boolean sendC2SPacket(ResourceLocation id, Packet<T> packet)
 	{
 		if (this.clientListeners.containsKey(id))
 		{
@@ -94,7 +94,7 @@ public class PacketListenerManager implements IPacketListenerManager
 		return false;
 	}
 
-	public <T extends PacketListener> boolean sendS2CPacket(Identifier id, Packet<T> packet, ServerPlayer player)
+	public <T extends PacketListener> boolean sendS2CPacket(ResourceLocation id, Packet<T> packet, ServerPlayer player)
 	{
 		if (this.serverListeners.containsKey(id))
 		{
@@ -106,7 +106,7 @@ public class PacketListenerManager implements IPacketListenerManager
 	}
 
 	@ApiStatus.Internal
-	public <T extends PacketListener> boolean onS2CPacketReceived(Identifier id, Packet<T> packet)
+	public <T extends PacketListener> boolean onS2CPacketReceived(ResourceLocation id, Packet<T> packet)
 	{
 		if (this.clientListeners.containsKey(id))
 		{
@@ -117,7 +117,7 @@ public class PacketListenerManager implements IPacketListenerManager
 	}
 
 	@ApiStatus.Internal
-	public <T extends PacketListener> boolean onC2SPacketReceived(Identifier id, Packet<T> packet, ServerPlayer player)
+	public <T extends PacketListener> boolean onC2SPacketReceived(ResourceLocation id, Packet<T> packet, ServerPlayer player)
 	{
 		if (this.serverListeners.containsKey(id))
 		{

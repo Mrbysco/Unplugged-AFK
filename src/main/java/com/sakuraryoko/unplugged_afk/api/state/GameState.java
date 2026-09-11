@@ -24,7 +24,7 @@ import com.sakuraryoko.unplugged_afk.impl.modinit.InitWrap;
 import com.sakuraryoko.unplugged_afk.impl.player.wrap.GameWrap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import org.jspecify.annotations.NonNull;
+import javax.annotation.Nonnull;
 
 import java.util.Objects;
 
@@ -37,7 +37,7 @@ import java.util.Objects;
 public record GameState(String gameMode, boolean flying)
 {
 	@Override
-	public @NonNull String toString()
+	public @Nonnull String toString()
 	{
 		return "GameState{gameType="+this.gameMode+",flying="+this.flying+"}";
 	}

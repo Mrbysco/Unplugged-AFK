@@ -23,11 +23,7 @@ package com.sakuraryoko.unplugged_afk.impl.commands;
 import com.google.common.base.Predicates;
 import com.sakuraryoko.unplugged_afk.impl.config.ConfigWrap;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.server.permissions.Permission;
-import net.minecraft.server.permissions.PermissionCheck;
-import net.minecraft.server.permissions.PermissionLevel;
-import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
@@ -41,12 +37,7 @@ public class PermsWrap
 {
 	public static Predicate<CommandSourceStack> check(@Nonnull String node, int level)
 	{
-		return Commands.hasPermission(new PermissionCheck.Require(new Permission.HasCommandLevel(permissionFromInt(level))));
-////#if MC >= 1.16.5
-////$$		return Permissions.require(node, permissionFromInt(level));
-////#else
-//		return (src -> src.hasPermission(permissionFromInt(level)));
-////#endif
+		return (src -> src.hasPermission(permissionFromInt(level)));
 	}
 
 	public static Predicate<CommandSourceStack> checkAdv(@Nonnull String node, int level)
@@ -56,25 +47,16 @@ public class PermsWrap
 			return Predicates.alwaysFalse();
 		}
 
-////#if MC >= 1.16.5
-////$$		return Permissions.require(node, permissionFromInt(level));
-////#else
-//		return (src -> src.hasPermission(permissionFromInt(level)));
-////#endif
-		return Commands.hasPermission(new PermissionCheck.Require(new Permission.HasCommandLevel(permissionFromInt(level))));
+		return (src -> src.hasPermission(permissionFromInt(level)));
 	}
 
-//	public static boolean check(@Nonnull Entity entity, @Nonnull String node, int level)
-//	{
-////#if MC >= 1.16.5
-////$$		return Permissions.check(entity, node, permissionFromInt(level));
-////#else
-//		return entity.hasPermissions(permissionFromInt(level));
-////#endif
-//	}
+	public static boolean check(@Nonnull Entity entity, @Nonnull String node, int level)
+	{
+		return entity.hasPermissions(permissionFromInt(level));
+	}
 
-  	public static PermissionLevel permissionFromInt(int level)
-  	{
-  		return PermissionLevel.byId(Mth.clamp(level, 0, PermissionLevel.OWNERS.id()));
-  	}
+	public static int permissionFromInt(int level)
+{
+	return level;
+}
 }

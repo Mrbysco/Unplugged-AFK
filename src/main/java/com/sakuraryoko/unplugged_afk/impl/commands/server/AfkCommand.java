@@ -38,7 +38,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.NameAndId;
 import org.jetbrains.annotations.ApiStatus;
 
 import static net.minecraft.commands.Commands.argument;
@@ -96,7 +95,7 @@ public class AfkCommand implements IServerCommand
         ServerPlayer player = src.getPlayer();
         GameProfile profile = player.getGameProfile();
 
-        if (server.isSingleplayerOwner(new NameAndId(profile)))
+	    if (server.isSingleplayerOwner(profile))
         {
             String msg = "§cCan't use unplugged as the single player server owner§r";
             context.getSource().sendSuccess(() -> InitWrap.text().formatTextSafe(msg), false);

@@ -23,6 +23,7 @@ package com.sakuraryoko.unplugged_afk.impl.mixins;
 import com.mojang.authlib.GameProfile;
 import com.sakuraryoko.unplugged_afk.impl.events.PlayerEventsHandler;
 import com.sakuraryoko.unplugged_afk.impl.player.interfaces.IPlayerInvoker;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
@@ -46,9 +47,9 @@ public abstract class MixinServerPlayer_core extends Player implements IPlayerIn
 	@Shadow public ServerGamePacketListenerImpl connection;
 	@Unique public ServerPlayer player = (ServerPlayer) (Object) this;
 
-	public MixinServerPlayer_core(MinecraftServer server, Level level, GameProfile gameProfile, ClientInformation ci)
+	public MixinServerPlayer_core(Level level, BlockPos pos, float yRot, GameProfile gameProfile, ClientInformation ci)
 	{
-		super(level, gameProfile);
+		super(level, pos, yRot, gameProfile);
 	}
 
 	@Override

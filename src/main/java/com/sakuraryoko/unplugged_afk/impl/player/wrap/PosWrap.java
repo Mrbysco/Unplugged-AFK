@@ -42,6 +42,6 @@ public class PosWrap
 		ResourceKey<Level> key = player.level().dimension();
 		Vec3 pos = player.position();
 
-		return new PosState(key.identifier().toString(), pos.x(), pos.y(), pos.z(), player.getYRot(), player.getXRot());
+		return new PosState(key.location().toString(), pos.x(), pos.y(), pos.z(), player.getYRot(), player.getXRot());
 	}
 }

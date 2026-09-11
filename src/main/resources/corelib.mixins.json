@@ -2,7 +2,7 @@
     "required": true,
     "minVersion": "0.8",
     "package": "com.sakuraryoko.corelib.impl.mixin",
-    "compatibilityLevel": "JAVA_25",
+    "compatibilityLevel": "JAVA_21",
     "mixins": [
         "network.c2s.IMixinServerboundCustomPayloadPacket_customPayload",
         "network.c2s.MixinServerboundCustomPayloadPacket_customPayload",

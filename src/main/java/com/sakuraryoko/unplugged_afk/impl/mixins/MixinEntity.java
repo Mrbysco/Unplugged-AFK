@@ -40,7 +40,7 @@ public abstract class MixinEntity
 	@Shadow public abstract @Nullable LivingEntity getControllingPassenger();
 	@Shadow private Level level;
 
-	@Inject(method = "isLocalInstanceAuthoritative", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "isControlledByLocalInstance", at = @At("HEAD"), cancellable = true)
 	private void unplugged$isControlledByLocalInstance(CallbackInfoReturnable<Boolean> cir)
 	{
 		if ((Object) this instanceof UnpluggedServerPlayer ||

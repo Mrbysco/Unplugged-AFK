@@ -22,7 +22,7 @@ package com.sakuraryoko.corelib.api.network.payload;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * A common interface for defining network payloads
@@ -32,7 +32,7 @@ import net.minecraft.resources.Identifier;
  */
 public interface INetworkPayload<B extends FriendlyByteBuf, PAYLOAD extends CustomPacketPayload>
 {
-	Identifier getPacketId();
+	ResourceLocation getPacketId();
 
 	CustomPacketPayload.TypeAndCodec<B, PAYLOAD> getTypeAndCodec();
 }

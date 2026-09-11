@@ -35,7 +35,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class MixinPlayer
 {
 	@WrapOperation(
-			method = "causeExtraKnockback",
+			method = "attack",
 			at = @At(value = "FIELD",
 			         target = "Lnet/minecraft/world/entity/Entity;hurtMarked:Z",
 			         ordinal = 0,

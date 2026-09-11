@@ -31,7 +31,7 @@ public class Reference
 	public static final Path GAME_DIR = NeoForgeReference.GAME_DIR;
     public static final Path CONFIG_DIR = NeoForgeReference.CONFIG_DIR;
     public static final String MOD_ID = "corelib";
-	public static final String MC_VERSION = SharedConstants.getCurrentVersion().name();
+	public static final String MC_VERSION = SharedConstants.getCurrentVersion().getName();
 
 	private static final boolean LOCAL_DEBUG = false;
 	private static final boolean LOCAL_ANSI_COLOR = false;

@@ -3,7 +3,7 @@
     "minVersion": "0.8",
     "package": "com.sakuraryoko.unplugged_afk.impl.mixins",
     "plugin": "com.sakuraryoko.unplugged_afk.impl.compat.mixin.UnpluggedAfkMixinConfigPlugin",
-    "compatibilityLevel": "JAVA_25",
+    "compatibilityLevel": "JAVA_21",
     "mixins": [
         "MixinConnection",
         "MixinEntity",

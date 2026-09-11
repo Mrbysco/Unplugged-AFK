@@ -24,7 +24,6 @@ import com.google.common.collect.ImmutableList;
 import com.sakuraryoko.corelib.impl.i18n.i18nLang;
 import com.sakuraryoko.corelib.impl.i18n.i18nManager;
 import net.minecraft.util.StringRepresentable;
-import org.jspecify.annotations.NonNull;
 
 import javax.annotation.Nonnull;
 
@@ -100,7 +99,7 @@ public class i18nConfig implements StringRepresentable
 	}
 
 	@Override
-	public @NonNull String getSerializedName()
+	public @Nonnull String getSerializedName()
 	{
 		return this.getStringValue();
 	}

@@ -24,7 +24,7 @@ import com.sakuraryoko.corelib.api.network.packet.INetworkPacket;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
@@ -36,7 +36,7 @@ import net.minecraft.server.level.ServerPlayer;
  */
 public interface IServerPacketListener<C2S, S2C, PACKET extends INetworkPacket<C2S, S2C>>
 {
-	Identifier getPacketId();
+	ResourceLocation getPacketId();
 
 	void sendAsPayload(PACKET packet, ServerPlayer player);
 

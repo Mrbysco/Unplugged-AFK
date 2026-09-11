@@ -29,6 +29,7 @@ import com.sakuraryoko.corelib.impl.modinit.ModInitManager;
 import com.sakuraryoko.corelib.impl.network.NetworkServiceManager;
 import com.sakuraryoko.corelib.impl.network.thread.CoreNetworkThreadHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ReceivingLevelScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.main.GameConfig;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -55,7 +56,7 @@ public abstract class MixinMinecraft
     }
 
     @Inject(method = "setLevel", at = @At("HEAD"))
-    private void corelib$onWorldJoinPre(ClientLevel clientLevel, CallbackInfo ci)
+    private void corelib$onWorldJoinPre(ClientLevel clientLevel, ReceivingLevelScreen.Reason reason, CallbackInfo ci)
     {
         if (this.level == null)
         {
@@ -76,7 +77,7 @@ public abstract class MixinMinecraft
     }
 
     @Inject(method = "setLevel", at = @At("RETURN"))
-    private void corelib$onWorldJoinPost(ClientLevel clientLevel, CallbackInfo ci)
+    private void corelib$onWorldJoinPost(ClientLevel clientLevel, ReceivingLevelScreen.Reason reason, CallbackInfo ci)
     {
         if (this.lastLevel != null)
         {

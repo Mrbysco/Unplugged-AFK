@@ -24,11 +24,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
 import com.sakuraryoko.unplugged_afk.impl.player.unplugged.UnpluggedPlayerUtils;
-import com.sakuraryoko.unplugged_afk.impl.player.wrap.ProfileWrap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
-import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import org.jetbrains.annotations.ApiStatus;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,18 +39,18 @@ import java.net.SocketAddress;
 public abstract class MixinServerLoginPacketListenerImpl
 {
 	@WrapOperation(method = "verifyLoginAndFinishConnectionSetup",
-						at = @At(value = "INVOKE",
-									target = "Lnet/minecraft/server/players/PlayerList;canPlayerLogin(Ljava/net/SocketAddress;Lnet/minecraft/server/players/NameAndId;)Lnet/minecraft/network/chat/Component;"))
+		at = @At(value = "INVOKE",
+		target = "Lnet/minecraft/server/players/PlayerList;canPlayerLogin(Ljava/net/SocketAddress;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/network/chat/Component;"))
 	private Component unplugged$checkForStaleShadow(PlayerList instance, SocketAddress socketAddress,
-														NameAndId nameAndId,
-														Operation<Component> original)
+		GameProfile gameProfile,
+		Operation<Component> original)
 	{
-		ServerPlayer player = instance.getPlayer(nameAndId.id());
+		ServerPlayer player = instance.getPlayer(gameProfile.getId());
 		GameProfile profile;
-		profile = ProfileWrap.profile(nameAndId);
+		profile = gameProfile;
 
 		UnpluggedPlayerUtils.checkForUnpluggedAtPreLogin(instance, profile, player);
 
-		return original.call(instance, socketAddress, nameAndId);
+		return original.call(instance, socketAddress, gameProfile);
 	}
 }

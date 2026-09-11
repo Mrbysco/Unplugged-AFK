@@ -26,9 +26,9 @@ import com.sakuraryoko.corelib.impl.events.players.PlayerEventsManager;
 import com.sakuraryoko.corelib.impl.network.announcer.CoreServiceHandler;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
-import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -49,10 +49,16 @@ public abstract class MixinPlayerList
     }
 
     @Inject(method = "canPlayerLogin", at = @At("RETURN"))
-    private void corelib$canPlayerLogin(SocketAddress socketAddress, NameAndId nameAndId, CallbackInfoReturnable<Component> cir)
+    private void corelib$canPlayerLogin(SocketAddress address, GameProfile profile, CallbackInfoReturnable<Component> cir)
 	{
-		((PlayerEventsManager) PlayerEventsManager.getInstance()).onConnection(socketAddress, new GameProfile(nameAndId.id(), nameAndId.name()), cir.getReturnValue());
+		((PlayerEventsManager) PlayerEventsManager.getInstance()).onConnection(address, profile, cir.getReturnValue());
     }
+
+	@Inject(method = "getPlayerForLogin", at = @At("RETURN"))
+	private void corelib$onGetPlayerForLogin(GameProfile gameProfile, ClientInformation clientInformation, CallbackInfoReturnable<ServerPlayer> cir)
+	{
+		((PlayerEventsManager) PlayerEventsManager.getInstance()).onCreatePlayer(cir.getReturnValue(), gameProfile);
+	}
 
     // onPlayerConnect
     @Inject(method = "placeNewPlayer", at = @At("HEAD"))

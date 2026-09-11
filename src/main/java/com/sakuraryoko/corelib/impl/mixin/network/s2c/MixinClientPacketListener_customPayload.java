@@ -26,7 +26,7 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,7 +39,7 @@ public class MixinClientPacketListener_customPayload
 	private void corelib$onCustomPayload(CustomPacketPayload payload, CallbackInfo ci)
 	{
 		if (!Reference.EXPERIMENTAL) return;
-		Identifier id = payload.type().id();
+		ResourceLocation id = payload.type().id();
 		Packet<?> packet = new ClientboundCustomPayloadPacket(payload);
 
 		if (PacketListenerManager.getInstance().onS2CPacketReceived(id, packet))

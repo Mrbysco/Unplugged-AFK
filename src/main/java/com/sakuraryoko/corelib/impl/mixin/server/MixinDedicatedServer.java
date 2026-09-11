@@ -31,8 +31,8 @@ import net.minecraft.server.Services;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.DedicatedServerSettings;
+import net.minecraft.server.level.progress.ChunkProgressListenerFactory;
 import net.minecraft.server.packs.repository.PackRepository;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -40,15 +40,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Optional;
-
 @Mixin(DedicatedServer.class)
 public class MixinDedicatedServer
 {
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void corelib$onDedicatedServer(Thread serverThread, LevelStorageSource.LevelStorageAccess levelStorageSource, PackRepository packRepository,
-     WorldStem worldStem, Optional<GameRules> gameRules, DedicatedServerSettings settings, DataFixer fixerUpper,
-     Services services, CallbackInfo ci)
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void corelib$onDedicatedServer(Thread thread, LevelStorageSource.LevelStorageAccess levelStorageAccess,
+		PackRepository packRepository, WorldStem worldStem,
+		DedicatedServerSettings dedicatedServerSettings, DataFixer dataFixer,
+		Services services, ChunkProgressListenerFactory chunkProgressListenerFactory,
+		CallbackInfo ci)
     {
         ModInitManager.getInstance().registerModInitHandler(new CoreInit());
         ((ModInitManager) ModInitManager.getInstance()).onModInit();

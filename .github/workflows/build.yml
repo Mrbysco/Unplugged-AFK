@@ -3,7 +3,7 @@ name: Build and Publish
 on: [push, workflow_dispatch]
 
 env:
-  JDK_VERSION: 25
+  JDK_VERSION: 21
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
         with:
           name: build-output
           path: ./build/libs/*.jar
-#
+
 #  publish-maven:
 #    needs: build
 #    runs-on: ubuntu-latest

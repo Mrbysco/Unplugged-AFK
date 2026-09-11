@@ -20,36 +20,22 @@
 
 package com.sakuraryoko.unplugged_afk.impl.mixins;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.authlib.GameProfile;
-import com.sakuraryoko.unplugged_afk.impl.player.unplugged.UnpluggedServerPlayer;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(ServerPlayer.class)
 @ApiStatus.Internal
 public abstract class MixinServerPlayer_fakeMovement extends Player
 {
-	public MixinServerPlayer_fakeMovement(MinecraftServer server, Level level, GameProfile gameProfile, ClientInformation ci)
+	public MixinServerPlayer_fakeMovement(Level level, BlockPos pos, float yRot, GameProfile gameProfile, ClientInformation ci)
 	{
-		super(level, gameProfile);
-	}
-
-	@ModifyExpressionValue(method = {"getKnownMovement", "getKnownSpeed"},
-		at = @At(value = "FIELD",
-			target = "Lnet/minecraft/server/level/ServerPlayer;lastKnownClientMovement:Lnet/minecraft/world/phys/Vec3;",
-			opcode = Opcodes.GETFIELD),
-		require = 2)
-	private Vec3 unplugged$bypassClientMovementInfo(Vec3 original)
-	{
-		return (((Player) this) instanceof UnpluggedServerPlayer) ? super.getKnownMovement() : original;
+		super(level, pos, yRot, gameProfile);
+		throw new AssertionError();
 	}
 }

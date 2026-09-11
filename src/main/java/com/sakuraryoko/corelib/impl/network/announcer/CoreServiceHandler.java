@@ -34,7 +34,7 @@ import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
@@ -126,7 +126,7 @@ public class CoreServiceHandler
 			implements IServerPacketListener<C, S, PACKET>
 	{
 		@Override
-		public Identifier getPacketId()
+		public ResourceLocation getPacketId()
 		{
 			return CoreServicePacket.PACKET_ID;
 		}
@@ -165,7 +165,7 @@ public class CoreServiceHandler
 			implements IClientPacketListener<C, S, PACKET>
 	{
 		@Override
-		public Identifier getPacketId()
+		public ResourceLocation getPacketId()
 		{
 			return CoreServicePacket.PACKET_ID;
 		}

@@ -35,6 +35,6 @@ public class NeoForgeReference
 
 	protected static void onInitialize()
 	{
-		RUNNING_IN_IDE = !FMLLoader.getCurrent().isProduction();
+		RUNNING_IN_IDE = !FMLLoader.isProduction();
 	}
 }

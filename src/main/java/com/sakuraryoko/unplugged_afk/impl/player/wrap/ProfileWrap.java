@@ -21,7 +21,6 @@
 package com.sakuraryoko.unplugged_afk.impl.player.wrap;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.server.players.NameAndId;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.UUID;
@@ -31,17 +30,12 @@ public class ProfileWrap
 {
 	public static UUID id(GameProfile profile)
 	{
-		return profile.id();
+		return profile.getId();
 	}
 
 	public static String name(GameProfile profile)
 	{
-		return profile.name();
-	}
-
-	public static GameProfile profile(NameAndId nameAndId)
-	{
-		return new GameProfile(nameAndId.id(), nameAndId.name());
+		return profile.getName();
 	}
 
 	public static GameProfile profile(UUID id, String name)
