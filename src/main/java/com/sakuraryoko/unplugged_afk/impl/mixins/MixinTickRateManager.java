@@ -20,12 +20,43 @@
 
 package com.sakuraryoko.unplugged_afk.impl.mixins;
 
-import com.sakuraryoko.corelib.impl.util.MixinDummy;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.sakuraryoko.unplugged_afk.impl.player.unplugged.UnpluggedServerPlayer;
+import net.minecraft.world.TickRateManager;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(MixinDummy.class)
+import java.util.stream.Stream;
+
+@Mixin(TickRateManager.class)
 @ApiStatus.Internal
-public class MixinTickRateManager
+public abstract class MixinTickRateManager
 {
+	@Shadow
+	public abstract boolean runsNormally();
+
+	@ModifyReturnValue(method = "isEntityFrozen", at = @At("TAIL"))
+	private boolean unplugged$checkIsShadowFrozen(boolean original,
+	                                              @Local(argsOnly = true) Entity entity)
+	{
+		if (original) { return true; }
+		if (this.runsNormally()) { return false; }
+
+		Stream<Entity> passengers = entity.getPassengers().stream().flatMap(Entity::getSelfAndPassengers);
+
+		return isNotFake(entity) && passengers
+				.noneMatch(MixinTickRateManager::isNotFake);
+	}
+
+	@Unique
+	private static boolean isNotFake(Entity e)
+	{
+		return e instanceof Player && !(e instanceof UnpluggedServerPlayer);
+	}
 }

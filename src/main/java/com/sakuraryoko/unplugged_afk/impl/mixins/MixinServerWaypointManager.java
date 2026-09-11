@@ -20,23 +20,46 @@
 
 package com.sakuraryoko.unplugged_afk.impl.mixins;
 
-import com.sakuraryoko.corelib.impl.util.MixinDummy;
 import com.sakuraryoko.unplugged_afk.impl.player.interfaces.IWaypointManagerInvoker;
+import com.sakuraryoko.unplugged_afk.impl.player.unplugged.UnpluggedPlayerUtils;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.waypoints.ServerWaypointManager;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(MixinDummy.class)
-public class MixinServerWaypointManager implements IWaypointManagerInvoker
+@Mixin(ServerWaypointManager.class)
+public abstract class MixinServerWaypointManager implements IWaypointManagerInvoker
 {
+	@Shadow
+	public abstract void removePlayer(ServerPlayer player);
+
+	@Shadow
+	public abstract void addPlayer(ServerPlayer player);
+
+	@Inject(method = "addPlayer", at = @At("HEAD"))
+	private void unplugged$onAddPlayerWaypoint(ServerPlayer player, CallbackInfo ci)
+	{
+		UnpluggedPlayerUtils.onAddOrUpdateWaypoint((ServerWaypointManager) (Object) this, player);
+	}
+
+	@Inject(method = "updatePlayer", at = @At("HEAD"))
+	private void unplugged$onUpdatePlayerWaypoint(ServerPlayer player, CallbackInfo ci)
+	{
+		UnpluggedPlayerUtils.onAddOrUpdateWaypoint((ServerWaypointManager) (Object) this, player);
+	}
+
 	@Override
 	public void unplugged$addPlayer(ServerPlayer player)
 	{
-		// TODO
+		this.addPlayer(player);
 	}
 
 	@Override
 	public void unplugged$removePlayer(ServerPlayer player)
 	{
-		// TODO
+		this.removePlayer(player);
 	}
 }
