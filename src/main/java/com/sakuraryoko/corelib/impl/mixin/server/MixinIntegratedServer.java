@@ -27,6 +27,7 @@ import com.sakuraryoko.corelib.impl.network.NetworkServiceManager;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.GameType;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,38 +35,39 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(IntegratedServer.class)
-public class MixinIntegratedServer
+public abstract class MixinIntegratedServer
 {
-    @Shadow private GameType gameTypeForOtherPlayers;
+	@Shadow
+	public abstract @Nullable GameType getForcedGameType();
 
-    @Inject(method = "initServer", at = @At("RETURN"))
-    private void corelib$onInitServer(CallbackInfoReturnable<Boolean> cir)
-    {
-        if (cir.getReturnValue())
-        {
-            ((ModInitManager) ModInitManager.getInstance()).setIntegratedServer(true);
-            ((ServerEventsManager) ServerEventsManager.getInstance()).onIntegratedStartedInternal((IntegratedServer) (Object) this);
+	@Inject(method = "initServer", at = @At("RETURN"))
+	private void corelib$onInitServer(CallbackInfoReturnable<Boolean> cir)
+	{
+		if (cir.getReturnValue())
+		{
+			((ModInitManager) ModInitManager.getInstance()).setIntegratedServer(true);
+			((ServerEventsManager) ServerEventsManager.getInstance()).onIntegratedStartedInternal((IntegratedServer) (Object) this);
 
-            if (Reference.EXPERIMENTAL && !NetworkServiceManager.getInstance().isServerStarted())
-            {
-                NetworkServiceManager.getInstance().onStartServer();
-            }
-        }
-    }
+			if (Reference.EXPERIMENTAL && !NetworkServiceManager.getInstance().isServerStarted())
+			{
+				NetworkServiceManager.getInstance().onStartServer();
+			}
+		}
+	}
 
-    @Inject(method = "publishServer(Lnet/minecraft/server/MinecraftServer$MultiplayerScope;I)Z", at = @At("RETURN"))
-    private void corelib$onPublishServer(MinecraftServer.MultiplayerScope scope, int port,
-                                             CallbackInfoReturnable<Boolean> cir)
-    {
-        if (cir.getReturnValue())
-        {
-            ((ModInitManager) ModInitManager.getInstance()).setOpenToLan(true);
-            ((ServerEventsManager) ServerEventsManager.getInstance()).onOpenToLanInternal((IntegratedServer) (Object) this, this.gameTypeForOtherPlayers);
+	@Inject(method = "publishServer(Lnet/minecraft/server/MinecraftServer$MultiplayerScope;I)Z", at = @At("RETURN"))
+	private void corelib$onPublishServer(MinecraftServer.MultiplayerScope scope, int port,
+	                                     CallbackInfoReturnable<Boolean> cir)
+	{
+		if (cir.getReturnValue())
+		{
+			((ModInitManager) ModInitManager.getInstance()).setOpenToLan(true);
+			((ServerEventsManager) ServerEventsManager.getInstance()).onOpenToLanInternal((IntegratedServer) (Object) this, this.getForcedGameType());
 
-            if (Reference.EXPERIMENTAL && !NetworkServiceManager.getInstance().isServerStarted())
-            {
-                NetworkServiceManager.getInstance().onStartServer();
-            }
-        }
-    }
+			if (Reference.EXPERIMENTAL && !NetworkServiceManager.getInstance().isServerStarted())
+			{
+				NetworkServiceManager.getInstance().onStartServer();
+			}
+		}
+	}
 }
