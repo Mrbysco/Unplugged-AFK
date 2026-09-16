@@ -37,7 +37,7 @@ public abstract class MixinPlayer
 	@WrapOperation(
 			method = "causeExtraKnockback",
 			at = @At(value = "FIELD",
-			         target = "Lnet/minecraft/world/entity/Entity;hurtMarked:Z",
+			         target = "Lnet/minecraft/world/entity/Entity;syncVelocity:Z",
 			         ordinal = 0,
 			         opcode = Opcodes.GETFIELD
 			)
@@ -45,6 +45,6 @@ public abstract class MixinPlayer
 	private boolean unplugged$onKnockback(Entity instance, Operation<Boolean> original)
 	{
 		//		boolean orig = original.call(instance);
-		return instance.hurtMarked && !(instance instanceof UnpluggedServerPlayer);
+		return instance.syncVelocity && !(instance instanceof UnpluggedServerPlayer);
 	}
 }

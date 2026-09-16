@@ -259,7 +259,7 @@ public class UnpluggedPlayerUtils
 
 			if (player.isInvulnerable() && player.gameMode.isSurvival())
 			{
-				player.setInvulnerable(false);
+				player.setPermanentlyInvulnerable(false);
 			}
 
 			final String name = ProfileWrap.name(profile);

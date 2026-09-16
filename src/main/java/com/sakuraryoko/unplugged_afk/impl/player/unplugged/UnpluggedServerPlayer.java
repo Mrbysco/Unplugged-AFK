@@ -227,7 +227,7 @@ public class UnpluggedServerPlayer extends ServerPlayer
 		{
 			// Survival players shouldn't be able to fly, or be invulnerable.
 			shadow.getAbilities().flying = false;
-			shadow.setInvulnerable(false);
+			shadow.setPermanentlyInvulnerable(false);
 		}
 		else
 		{
@@ -353,7 +353,7 @@ public class UnpluggedServerPlayer extends ServerPlayer
 		{
 			// Survival players shouldn't be able to fly, or be invulnerable.
 			shadow.getAbilities().flying = false;
-			shadow.setInvulnerable(false);
+			shadow.setPermanentlyInvulnerable(false);
 		}
 		else
 		{
