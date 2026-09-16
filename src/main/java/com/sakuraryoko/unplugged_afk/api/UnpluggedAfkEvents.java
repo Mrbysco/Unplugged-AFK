@@ -20,7 +20,6 @@
 
 package com.sakuraryoko.unplugged_afk.api;
 
-import com.sakuraryoko.unplugged_afk.api.state.UnpluggedState;
 import net.neoforged.bus.api.Event;
 import org.jetbrains.annotations.Nullable;
 
