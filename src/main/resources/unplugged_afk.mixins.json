@@ -8,6 +8,7 @@
         "MixinConnection",
         "MixinEntity",
         "MixinMinecraftServer",
+        "MixinNetworkRegistry",
         "MixinPistonMovingBlockEntity",
         "MixinPlayer",
         "MixinPlayerList_core",
