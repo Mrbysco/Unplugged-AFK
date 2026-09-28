@@ -1,1 +1,1 @@
-* Backport to 1.21.1
+* Allow the unplugged connection to receive packets
